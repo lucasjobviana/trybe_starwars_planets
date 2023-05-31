@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
-function Filter() {
-  const { filterName, filterPlanets } = useContext(starWarsPlanetsContext);
+function Filter({ type, testId, handle }) {
+  const { filterPlanets } = useContext(starWarsPlanetsContext);
 
   const handleFilterChange = ({ target }) => {
-    // console.log(target.value);
-    console.log(filterName);
+    console.log(target.value);
+    alert('');
     filterPlanets(target.value);
   };
 
@@ -15,10 +15,10 @@ function Filter() {
       Filter
 
       <input
-        type="text"
-        data-testid="name-filter"
+        type={ type }
+        data-testid={ testId }
         placeholder="Filter Name"
-        onChange={ (element) => { handleFilterChange(element); } }
+        onChange={ (element) => { handle(element); } }
       />
 
     </div>

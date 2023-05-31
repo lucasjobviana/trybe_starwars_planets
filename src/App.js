@@ -5,6 +5,7 @@ import './App.css';
 import Table from './components/Table';
 import starWarsPlanetsContext from './context/starWarsPlanetsContext';
 import Filter from './components/Filter';
+import FilterByProperties from './components/FilterByProperties';
 
 const removeResidents = (results) => {
   const cpPlanetsWithoutResidents = [];
@@ -45,14 +46,31 @@ function App() {
       } }
     >
       <div className="App">
-        <p>
-          { `Hello, App! First planet is ${planets[0].name}` }
-          {' '}
-          <br />
-          { `Esse é o valor do meu filterName: ${filterName}`}
-        </p>
 
-        <Filter />
+        <Filter
+          testId="name-filter"
+          type="text"
+          handle={ function () { handleFilterChange(); } }
+        />
+        <FilterByProperties
+          properties={ [
+            'population', 'orbital_period', 'diameter',
+            'rotation_period', 'surface_water',
+          ] }
+          testId="column-filter"
+        />
+        <FilterByProperties
+          properties={ [
+            '>', '<', '=',
+          ] }
+          testId="comparison-filter"
+        />
+        <button data-testid="button-filter">
+          ADD Filter
+        </button>
+
+        ;
+
         <Table />
 
       </div>
