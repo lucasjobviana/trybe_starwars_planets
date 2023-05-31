@@ -16,13 +16,20 @@ function Table(props) {
   // <td key={ `tableHead${index}` }>{header}</td>
   // const rowOfHeadersElement = `<tr>${collumsOfHeadersElement}</tr>`;
   // console.log(firstRow);
-
   const state = useContext(starWarsPlanetsContext);
   console.log(state);
   const { planets } = state;
   console.log(planets);
 
   if (planets.length > 1) {
+    const { filterName } = state;
+
+    const planetsFiltered = planets.filter((
+      planet,
+    ) => planet.name.toUpperCase().includes(filterName.toUpperCase()));
+    console.clear();
+    console.log('fjdsfljdslkfkldsfjdsklj');
+    console.log(planetsFiltered, filterName);
     return (
       <div className="table">
         Table
@@ -31,7 +38,7 @@ function Table(props) {
 
           {
 
-            planets.map((planet, index) => (
+            planetsFiltered.map((planet, index) => (
               <tr key={ `row${index}` }>
                 <td>{planet.name}</td>
                 <td>{planet.rotation_period}</td>

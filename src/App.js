@@ -4,6 +4,7 @@ import { fetchAPI } from './tools/api';
 import './App.css';
 import Table from './components/Table';
 import starWarsPlanetsContext from './context/starWarsPlanetsContext';
+import Filter from './components/Filter';
 
 const removeResidents = (results) => {
   const cpPlanetsWithoutResidents = [];
@@ -19,12 +20,17 @@ const removeResidents = (results) => {
 const getPlanets = async (setPlanets) => {
   const data = await fetchAPI();
   const planets = removeResidents(data.results);
-  console.log(planets);
+  // console.log(planets);
   setPlanets(planets);
 };
 
 function App() {
   const [planets, setPlanets] = useState([{ }]);
+  const [filterName, setFilterName] = useState('');
+
+  const filterPlanets = (filter) => {
+    setFilterName(filter);
+  };
 
   useEffect(() => {
     getPlanets(setPlanets);
@@ -34,12 +40,19 @@ function App() {
     <starWarsPlanetsContext.Provider
       value={ {
         planets,
+        filterName,
+        filterPlanets,
       } }
     >
       <div className="App">
         <p>
           { `Hello, App! First planet is ${planets[0].name}` }
+          {' '}
+          <br />
+          { `Esse é o valor do meu filterName: ${filterName}`}
         </p>
+
+        <Filter />
         <Table />
 
       </div>
