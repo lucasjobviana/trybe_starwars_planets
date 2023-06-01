@@ -2,19 +2,20 @@ import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
 function Filter({ type, id }) {
-  const { addFilter } = useContext(starWarsPlanetsContext);
+  const { addFilter, value, name } = useContext(starWarsPlanetsContext);
 
   return (
     <div>
-      Filter
-
       <input
-        type={type}
-        data-testid={`${id}-filter`}
-        placeholder={`Filter ${id}`}
-        onChange={({ target: { name, value } }) => addFilter({ name: `FILTER_${id.toUpperCase()}`, value })}
+        type={ type }
+        value={ type === 'text' ? name : value.toString() }
+        data-testid={ `${id}-filter` }
+        placeholder={ `Filter ${id}` }
+        onChange={ ({ target: { value } }) => addFilter({
+          name: `FILTER_${id.toUpperCase()}`,
+          propertyValue: value,
+        }) }
       />
-
     </div>
   );
 }

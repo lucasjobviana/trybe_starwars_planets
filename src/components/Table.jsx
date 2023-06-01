@@ -13,9 +13,6 @@ function Table(props) {
     <th key={ `header${index}` }>{header}</th>
   ));
 
-  // <td key={ `tableHead${index}` }>{header}</td>
-  // const rowOfHeadersElement = `<tr>${collumsOfHeadersElement}</tr>`;
-  // console.log(firstRow);
   const state = useContext(starWarsPlanetsContext);
   console.log(state);
   const { planets } = state;
@@ -27,9 +24,7 @@ function Table(props) {
     const planetsFiltered = planets.filter((
       planet,
     ) => planet.name.toUpperCase().includes(filterName.toUpperCase()));
-    console.clear();
-    console.log('fjdsfljdslkfkldsfjdsklj');
-    console.log(planetsFiltered, filterName);
+
     return (
       <div className="table">
         Table

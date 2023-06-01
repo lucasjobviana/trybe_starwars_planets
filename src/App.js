@@ -28,23 +28,20 @@ const getPlanets = async (setPlanets) => {
 function App() {
   const [planets, setPlanets] = useState([{}]);
   const [filterName, setFilterName] = useState('');
-  const [column, setColumn] = useState('orbital_period');
-  const [comparison, setComparison] = useState('>')
+  const [column, setColumn] = useState('population');
+  const [comparison, setComparison] = useState('>');
+  const [value, setValue] = useState(0);
 
-  const filterPlanets = (filter) => {
-    setFilterName(filter);
-  };
-
-  const addFilter = ({ name, value }) => {
-    console.log("addFilter", name, value)
+  const addFilter = ({ name, propertyValue }) => {
+    console.log(name, propertyValue);
     switch (name) {
-      case 'FILTER_NAME': setFilterName(value); break;
-      case 'FILTER_COLUMN': setColumn(value); break;
-      case 'FILTER_COMPARISON': setComparison(value); break;
-      default: console.log('errrrrrrror')
-
+    case 'FILTER_NAME': setFilterName(propertyValue); break;
+    case 'FILTER_COLUMN': setColumn(propertyValue); break;
+    case 'FILTER_COMPARISON': setComparison(propertyValue); break;
+    case 'FILTER_VALUE': setValue(propertyValue); break;
+    default: console.log('errrrrrrror');
     }
-  }
+  };
 
   useEffect(() => {
     getPlanets(setPlanets);
@@ -52,33 +49,35 @@ function App() {
 
   return (
     <starWarsPlanetsContext.Provider
-      value={{
+      value={ {
         planets,
         filterName,
         column,
         setColumn,
+        value,
         comparison,
         setComparison,
         addFilter,
-      }}
+      } }
     >
       <div className="App">
         <p>{filterName}</p>
         <p>{comparison}</p>
         <p>{column}</p>
+        <p>{value}</p>
 
         <Filter type="text" id="name" />
         <FilterByProperties
-          properties={[
+          properties={ [
             'population', 'orbital_period', 'diameter',
             'rotation_period', 'surface_water',
-          ]}
+          ] }
           id="column"
         />
         <FilterByProperties
-          properties={[
+          properties={ [
             '>', '<', '=',
-          ]}
+          ] }
           id="comparison"
         />
         <Filter type="number" id="value" />
