@@ -3,13 +3,15 @@ import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
 function Filter({ type, id }) {
-  const { addFilter, filter: { name, value } } = useContext(starWarsPlanetsContext);
+  const { addFilter, filter: { name,
+    columnFilters } } = useContext(starWarsPlanetsContext);
+  const indexActual = columnFilters.length;
 
   return (
     <div>
       <input
         type={ type }
-        value={ type === 'text' ? name : value.toString() }
+        value={ type === 'text' ? name : columnFilters[indexActual - 1].value.toString() }
         data-testid={ `${id}-filter` }
         placeholder={ `Filter ${id}` }
         onChange={ ({ target }) => addFilter({

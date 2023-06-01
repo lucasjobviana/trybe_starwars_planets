@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
-function FilterByProperties({ properties, id }) {
+function FilterByProperties({ properties, id, valueDefault }) {
   const { addFilter } = useContext(starWarsPlanetsContext);
   const propertiesOptions = properties;
 
@@ -11,6 +11,7 @@ function FilterByProperties({ properties, id }) {
       FilterByProperties
       <select
         name={ id }
+        value={ valueDefault }
         onChange={ ({ target: { value } }) => addFilter({
           name: `FILTER_${id.toUpperCase()}`,
           propertyValue: value }) }

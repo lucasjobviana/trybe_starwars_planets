@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
-function Table(props) {
-  console.log(props);
+function Table() {
+  // console.log(props);
   const tableHeaders = [
     'Name', 'Rotation Period', 'Orbited Period', 'Diameter',
     'Climate', 'Gravity', 'Terrain', 'Surface Water',
@@ -14,14 +14,18 @@ function Table(props) {
   ));
 
   const state = useContext(starWarsPlanetsContext);
-  const { filter: { name, value, column, comparison, filterByColumn },
+  const { filter: { filterByColumn, name, columnFilters },
   } = state;
 
-  console.log(state);
+  // console.log(state);
   const { planets } = state;
-  console.log(planets);
+  // console.log(planets);
 
   if (planets.length > 1) {
+    const { value, column, comparison } = columnFilters[0];
+    console.log('$$$$$$____objetos_____$$$$$$');
+    console.log(columnFilters[0]);
+    console.log(value, column, comparison);
     const planetsFilteredObj = {
       planetsFiltered: [],
     };
@@ -43,6 +47,8 @@ function Table(props) {
       planetsFilteredObj.planetsFiltered = planetsFilteredObj.planetsFiltered.filter(
         (planet) => compare(Number(planet[column])),
       );
+      console.log('planetas filtrados');
+      console.log(planetsFilteredObj);
     }
 
     return (
