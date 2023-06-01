@@ -1,24 +1,18 @@
 import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
-function Filter({ type, testId, handle }) {
-  const { filterPlanets } = useContext(starWarsPlanetsContext);
-
-  const handleFilterChange = ({ target }) => {
-    console.log(target.value);
-    alert('');
-    filterPlanets(target.value);
-  };
+function Filter({ type, id }) {
+  const { addFilter } = useContext(starWarsPlanetsContext);
 
   return (
     <div>
       Filter
 
       <input
-        type={ type }
-        data-testid={ testId }
-        placeholder="Filter Name"
-        onChange={ (element) => { handle(element); } }
+        type={type}
+        data-testid={`${id}-filter`}
+        placeholder={`Filter ${id}`}
+        onChange={({ target: { name, value } }) => addFilter({ name: `FILTER_${id.toUpperCase()}`, value })}
       />
 
     </div>

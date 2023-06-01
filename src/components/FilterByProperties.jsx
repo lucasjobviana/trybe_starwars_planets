@@ -1,23 +1,21 @@
-// import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
+import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
-function FilterByProperties({ properties, testId }) {
+function FilterByProperties({ properties, id }) {
+  const { addFilter } = useContext(starWarsPlanetsContext);
   const propertiesOptions = properties;
-
-  const handleChange = ({ target }) => {
-    console.log(target.value);
-  };
 
   return (
     <div>
       FilterByProperties
       <select
-        name={ `optionProperty${testId}` }
-        onChange={ handleChange }
-        data-testid={ testId }
+        name={id}
+        onChange={({ target: { name, value } }) => addFilter({ name: `FILTER_${name.toUpperCase()}`, value })}
+        data-testid={`${id}-filter`}
       >
         {
           propertiesOptions.map((property, index) => (
-            <option key={ `option${testId}${index}` }>
+            <option key={`option${id}${index}`}>
               {property}
             </option>
           ))

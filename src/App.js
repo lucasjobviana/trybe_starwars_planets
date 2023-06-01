@@ -26,12 +26,25 @@ const getPlanets = async (setPlanets) => {
 };
 
 function App() {
-  const [planets, setPlanets] = useState([{ }]);
+  const [planets, setPlanets] = useState([{}]);
   const [filterName, setFilterName] = useState('');
+  const [column, setColumn] = useState('orbital_period');
+  const [comparison, setComparison] = useState('>')
 
   const filterPlanets = (filter) => {
     setFilterName(filter);
   };
+
+  const addFilter = ({ name, value }) => {
+    console.log("addFilter", name, value)
+    switch (name) {
+      case 'FILTER_NAME': setFilterName(value); break;
+      case 'FILTER_COLUMN': setColumn(value); break;
+      case 'FILTER_COMPARISON': setComparison(value); break;
+      default: console.log('errrrrrrror')
+
+    }
+  }
 
   useEffect(() => {
     getPlanets(setPlanets);
@@ -39,32 +52,36 @@ function App() {
 
   return (
     <starWarsPlanetsContext.Provider
-      value={ {
+      value={{
         planets,
         filterName,
-        filterPlanets,
-      } }
+        column,
+        setColumn,
+        comparison,
+        setComparison,
+        addFilter,
+      }}
     >
       <div className="App">
+        <p>{filterName}</p>
+        <p>{comparison}</p>
+        <p>{column}</p>
 
-        <Filter
-          testId="name-filter"
-          type="text"
-          handle={ function () { handleFilterChange(); } }
-        />
+        <Filter type="text" id="name" />
         <FilterByProperties
-          properties={ [
+          properties={[
             'population', 'orbital_period', 'diameter',
             'rotation_period', 'surface_water',
-          ] }
-          testId="column-filter"
+          ]}
+          id="column"
         />
         <FilterByProperties
-          properties={ [
+          properties={[
             '>', '<', '=',
-          ] }
-          testId="comparison-filter"
+          ]}
+          id="comparison"
         />
+        <Filter type="number" id="value" />
         <button data-testid="button-filter">
           ADD Filter
         </button>
