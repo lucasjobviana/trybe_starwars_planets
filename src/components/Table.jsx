@@ -16,16 +16,9 @@ function Table() {
   const state = useContext(starWarsPlanetsContext);
   const { filter: { filterByColumn, name, columnFilters },
   } = state;
-
-  // console.log(state);
   const { planets } = state;
-  // console.log(planets);
 
   if (planets.length > 1) {
-    const { value, column, comparison } = columnFilters[0];
-    console.log('$$$$$$____objetos_____$$$$$$');
-    console.log(columnFilters[0]);
-    console.log(value, column, comparison);
     const planetsFilteredObj = {
       planetsFiltered: [],
     };
@@ -35,20 +28,40 @@ function Table() {
     ) => planet.name.toUpperCase().includes(name.toUpperCase()));
 
     if (filterByColumn === 'true') {
-      const compare = (property) => {
-        switch (comparison) {
-        case 'maior que': return (property > Number(value));
-        case 'menor que': return (property < Number(value));
-        case 'igual a': return (property === Number(value));
-        default:
+      const compare = (property, compareWith, operatorComparation) => {
+        switch (operatorComparation) {
+        case 'maior que': {
+          return (property > Number(compareWith));
+        }
+        case 'menor que': {
+          return (property < Number(compareWith)); }
+        case 'igual a': {
+          return (property === Number(compareWith));
+        }
+        default: { console.log('isDefault', property, compareWith, operatorComparation); }
         }
       };
 
-      planetsFilteredObj.planetsFiltered = planetsFilteredObj.planetsFiltered.filter(
-        (planet) => compare(Number(planet[column])),
-      );
-      console.log('planetas filtrados');
-      console.log(planetsFilteredObj);
+      const compareForEachFilter = () => {
+        console.log('ds');
+        let retorno = [];
+
+        for (let index = 0; index < (columnFilters.length - 1); index += 1) {
+          planetsFilteredObj.planetsFiltered = planetsFilteredObj.planetsFiltered.filter(
+            (planet) => compare(
+              Number(planet[columnFilters[index].column]),
+              columnFilters[index].value,
+              columnFilters[index].comparison,
+            ),
+          );
+          console.log(planetsFilteredObj.planetsFiltered);
+          retorno = [...retorno, ...planetsFilteredObj.planetsFiltered];
+        }
+
+        return retorno;
+      };
+
+      compareForEachFilter();
     }
 
     return (
@@ -56,9 +69,7 @@ function Table() {
         Table
         <table>
           <tr>{tableHeaderRow}</tr>
-
           {
-
             planetsFilteredObj.planetsFiltered.map((planet, index) => (
               <tr key={ `row${index}` }>
                 <td>{planet.name}</td>
