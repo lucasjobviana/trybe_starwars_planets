@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
@@ -26,5 +27,9 @@ function FilterByProperties({ properties, id }) {
     </div>
   );
 }
+FilterByProperties.propTypes = {
+  properties: PropTypes.shape({}),
+  id: PropTypes.string,
+}.isRequired;
 
 export default FilterByProperties;

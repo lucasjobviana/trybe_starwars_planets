@@ -27,19 +27,29 @@ const getPlanets = async (setPlanets) => {
 
 function App() {
   const [planets, setPlanets] = useState([{}]);
-  const [filterName, setFilterName] = useState('');
-  const [column, setColumn] = useState('population');
-  const [comparison, setComparison] = useState('>');
-  const [value, setValue] = useState(0);
+
+  const [filter, setFilter] = useState({
+    name: '',
+    column: 'population',
+    comparison: 'maior que',
+    value: 0,
+    filterByColumn: 'false',
+  });
 
   const addFilter = ({ name, propertyValue }) => {
     console.log(name, propertyValue);
     switch (name) {
-    case 'FILTER_NAME': setFilterName(propertyValue); break;
-    case 'FILTER_COLUMN': setColumn(propertyValue); break;
-    case 'FILTER_COMPARISON': setComparison(propertyValue); break;
-    case 'FILTER_VALUE': setValue(propertyValue); break;
-    default: console.log('errrrrrrror');
+    case 'FILTER_NAME': { console.log('filterName');
+      setFilter({ ...filter, name: propertyValue }); break; }
+    case 'FILTER_COLUMN': { setFilter({ ...filter, column: propertyValue }); break; }
+    case 'FILTER_COMPARISON': {
+      setFilter({ ...filter, comparison: propertyValue }); break;
+    }
+    case 'FILTER_VALUE': { setFilter({ ...filter, value: propertyValue }); break; }
+    case 'FILTER_BY_COLUMN': { setFilter({
+      ...filter, filterByColumn: propertyValue,
+    }); break; }
+    default:
     }
   };
 
@@ -51,20 +61,18 @@ function App() {
     <starWarsPlanetsContext.Provider
       value={ {
         planets,
-        filterName,
-        column,
-        setColumn,
-        value,
-        comparison,
-        setComparison,
+        filterName: filter.name,
+        filter,
+        value: filter.value,
         addFilter,
       } }
     >
       <div className="App">
-        <p>{filterName}</p>
-        <p>{comparison}</p>
-        <p>{column}</p>
-        <p>{value}</p>
+        <p>{filter.name}</p>
+        <p>{filter.comparison}</p>
+        <p>{filter.column}</p>
+        <p>{filter.value}</p>
+        <p>{filter.filterByColumn}</p>
 
         <Filter type="text" id="name" />
         <FilterByProperties
@@ -76,12 +84,18 @@ function App() {
         />
         <FilterByProperties
           properties={ [
-            '>', '<', '=',
+            'maior que', 'menor que', 'igual a',
           ] }
           id="comparison"
         />
         <Filter type="number" id="value" />
-        <button data-testid="button-filter">
+
+        <button
+          data-testid="button-filter"
+          onClick={ () => {
+            addFilter({ name: 'FILTER_BY_COLUMN', propertyValue: 'true' });
+          } }
+        >
           ADD Filter
         </button>
 

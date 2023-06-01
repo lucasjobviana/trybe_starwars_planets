@@ -14,16 +14,36 @@ function Table(props) {
   ));
 
   const state = useContext(starWarsPlanetsContext);
+  const { filter: { name, value, column, comparison, filterByColumn },
+  } = state;
+
   console.log(state);
   const { planets } = state;
   console.log(planets);
 
   if (planets.length > 1) {
-    const { filterName } = state;
+    const planetsFilteredObj = {
+      planetsFiltered: [],
+    };
 
-    const planetsFiltered = planets.filter((
+    planetsFilteredObj.planetsFiltered = planets.filter((
       planet,
-    ) => planet.name.toUpperCase().includes(filterName.toUpperCase()));
+    ) => planet.name.toUpperCase().includes(name.toUpperCase()));
+
+    if (filterByColumn === 'true') {
+      const compare = (property) => {
+        switch (comparison) {
+        case 'maior que': return (property > Number(value));
+        case 'menor que': return (property < Number(value));
+        case 'igual a': return (property === Number(value));
+        default:
+        }
+      };
+
+      planetsFilteredObj.planetsFiltered = planetsFilteredObj.planetsFiltered.filter(
+        (planet) => compare(Number(planet[column])),
+      );
+    }
 
     return (
       <div className="table">
@@ -33,7 +53,7 @@ function Table(props) {
 
           {
 
-            planetsFiltered.map((planet, index) => (
+            planetsFilteredObj.planetsFiltered.map((planet, index) => (
               <tr key={ `row${index}` }>
                 <td>{planet.name}</td>
                 <td>{planet.rotation_period}</td>
@@ -58,10 +78,14 @@ function Table(props) {
                 <td>{planet.created}</td>
                 <td>{planet.edited}</td>
                 <td>{planet.url}</td>
+                {
+
+                }
               </tr>
             ))
           }
         </table>
+
       </div>
     );
   }
