@@ -6,6 +6,10 @@ import starWarsPlanetsContext from './context/starWarsPlanetsContext';
 import Filter from './components/Filter';
 import FilterByProperties from './components/FilterByProperties';
 
+const propertiesColumns = [
+  'population', 'orbital_period', 'diameter',
+  'rotation_period', 'surface_water',
+];
 const removeResidents = (results) => {
   const cpPlanetsWithoutResidents = [];
 
@@ -35,61 +39,52 @@ function App() {
 
   const addFilter = ({ name, propertyValue }) => {
     const cpColumnsFilters = filter.columnFilters;
-    switch (name) {
+    switch (name) { // REMOVE_ALL_FILTERS
+    case 'REMOVE_ALL_FILTERS': {
+      setFilter({
+        ...filter,
+        columnsFiltered: [],
+        columnFilters: [{ column: 'population', comparison: 'maior que', value: 0 }],
+        action: 'add',
+      }); break;
+    }
     case 'DELETE_FILTER': {
-      console.log('cheguei aki');
       filter.columnsFiltered.splice(filter.columnsFiltered.indexOf(propertyValue), 1);
+      const c = cpColumnsFilters.filter((f) => f.column !== propertyValue);
       const cpColumnsFiltered = [...filter.columnsFiltered];
 
       setFilter({
-        ...filter,
-        columnsFiltered: cpColumnsFiltered,
-
-      }); break; }
-    case 'FILTER_NAME': { // console.log('filterName');
-      setFilter({ ...filter, name: propertyValue }); break; }
+        ...filter, columnsFiltered: cpColumnsFiltered, columnFilters: c, action: 'rmv',
+      }); break;
+    }
+    case 'FILTER_NAME': { setFilter({ ...filter, name: propertyValue }); break; }
     case 'FILTER_COLUMN': {
       cpColumnsFilters[actualIndex] = {
-        ...filter.columnFilters[actualIndex], column: propertyValue };
-      setFilter({
-        ...filter,
-        columnFilters: cpColumnsFilters,
-      }); break; }
+        ...filter.columnFilters[actualIndex], column: propertyValue,
+      };
+      setFilter({ ...filter, columnFilters: cpColumnsFilters }); break;
+    }
     case 'FILTER_COMPARISON': {
       cpColumnsFilters[actualIndex] = {
-        ...filter.columnFilters[actualIndex], comparison: propertyValue };
-      setFilter({
-        ...filter,
-        columnFilters: cpColumnsFilters,
-      }); break;
+        ...filter.columnFilters[actualIndex], comparison: propertyValue,
+      };
+      setFilter({ ...filter, columnFilters: cpColumnsFilters }); break;
     }
     case 'FILTER_VALUE': {
       cpColumnsFilters[actualIndex] = {
-        ...filter.columnFilters[actualIndex], value: propertyValue };
-      setFilter({
-        ...filter,
-        columnFilters: cpColumnsFilters,
-      }); break;
+        ...filter.columnFilters[actualIndex], value: propertyValue,
+      };
+      setFilter({ ...filter, columnFilters: cpColumnsFilters }); break;
     }
     case 'FILTER_BY_COLUMN': {
-      setFilter({
-        ...filter,
+      setFilter({ ...filter,
         filterByColumn: propertyValue,
         columnsFiltered: [
-          ...filter.columnsFiltered,
-          filter.columnFilters[actualIndex].column,
+          ...filter.columnsFiltered, filter.columnFilters[actualIndex].column,
         ],
-        columnFilters: [
-          ...filter.columnFilters,
-          {
-            column: 'population',
-            comparison: 'maior que',
-            value: 0,
-          },
-        ],
+        action: 'add',
       }); break;
-    }
-    default:
+    } default:
     }
   };
 
@@ -97,13 +92,59 @@ function App() {
     getPlanets(setPlanets);
   }, []);
 
+  useEffect(() => {
+    if (filter.columnsFiltered.length > 0) {
+      console.log('maior que 0');
+      console.log(filter.columnsFiltered);
+      const a = propertiesColumns.reduce((propsFiltered, property) => {
+        if (!filter.columnsFiltered.some((cF) => cF === property)) {
+          propsFiltered.push(property);
+        }
+        return propsFiltered;
+      }, []);
+      console.log('vou setar [0] para ');
+      if (filter.action === 'add') {
+        setFilter({
+          ...filter,
+          columnFilters: [
+            ...filter.columnFilters,
+            {
+              column: a[0],
+              comparison: 'maior que',
+              value: 0,
+            },
+          ],
+        });
+      }
+      if (filter.action === 'rmv') {
+        filter.columnFilters.pop();
+        setFilter({
+          ...filter,
+          columnFilters: filter.columnFilters,
+        });
+        setFilter({
+          ...filter,
+          columnFilters: [
+            ...filter.columnFilters,
+            {
+              column: a[0],
+              comparison: 'maior que',
+              value: 0,
+            },
+          ],
+        });
+      }
+    }
+  }, [filter.columnsFiltered]);
+
   let filtersElements = '';
 
   if (filter.columnsFiltered.length > 0) {
-    filtersElements = filter.columnsFiltered.map((column) => (
+    filtersElements = filter.columnsFiltered.map((column, index) => (
       <div key={ column } data-testid="filter">
-        {column}
+
         <button
+          key={ `${column}${index}` }
           name={ column }
           onClick={ () => {
             addFilter({
@@ -112,37 +153,30 @@ function App() {
             });
           } }
         >
+          {column}
+          {' '}
           x
         </button>
       </div>
+
     ));
   }
 
   return (
     <starWarsPlanetsContext.Provider value={ { planets, filter, addFilter } }>
       <div className="App">
-        <p>
-          <span>Name:</span>
-          <span>{filter.name}</span>
-        </p>
-        <p>
-          Comparison:
-          {filter.columnFilters[actualIndex].comparison}
-        </p>
-        <p>
-          Column:
-          {filter.columnFilters[actualIndex].column}
-        </p>
-        <p>
-          Value:
-          {filter.columnFilters[actualIndex].value}
-        </p>
-        <p>
-          Filter by Column:
-          {filter.filterByColumn}
-        </p>
+        <div id="filtersList">
+          {filtersElements}
+          <button
+            data-testid="button-remove-filters"
+            onClick={ () => {
+              addFilter({ name: 'REMOVE_ALL_FILTERS', propertyValue: '' });
+            } }
+          >
+            Remove All Filters
+          </button>
+        </div>
 
-        {filtersElements}
         <Filter type="text" id="name" />
         <FilterByProperties
           properties={ [
@@ -150,12 +184,10 @@ function App() {
             'rotation_period', 'surface_water',
           ] }
           id="column"
-          valueDefault={ filter.columnFilters[0].column }
         />
         <FilterByProperties
           properties={ ['maior que', 'menor que', 'igual a'] }
           id="comparison"
-          valueDefault={ filter.columnFilters[0].comparison }
         />
         <Filter type="number" id="value" />
 

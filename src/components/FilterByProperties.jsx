@@ -15,15 +15,19 @@ function FilterByProperties({ properties, id }) {
     }, []);
   }
 
+  console.log('macarrão');
+  console.log(properties[0], columnsFiltered.length > 0 && id === 'column');
+
   return (
     <div>
       FilterByProperties
       <select
         name={ id }
-        // value={ valueDefault }
+        id={ id }
         onChange={ ({ target: { value } }) => addFilter({
           name: `FILTER_${id.toUpperCase()}`,
-          propertyValue: value }) }
+          propertyValue: value,
+        }) }
         data-testid={ `${id}-filter` }
       >
         {
