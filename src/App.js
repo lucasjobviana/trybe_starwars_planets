@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAPI } from './tools/api';
-// import { results } from './mocks/results';
+import { fetchAPI } from './tools/api';// import { results } from './mocks/results';
 import './App.css';
 import Table from './components/Table';
 import starWarsPlanetsContext from './context/starWarsPlanetsContext';
@@ -21,13 +20,11 @@ const removeResidents = (results) => {
 const getPlanets = async (setPlanets) => {
   const data = await fetchAPI();
   const planets = removeResidents(data.results);
-  // console.log(planets);
   setPlanets(planets);
 };
 
 function App() {
   const [planets, setPlanets] = useState([{}]);
-
   const [filter, setFilter] = useState({
     name: '',
     columnsFiltered: [],
@@ -39,6 +36,14 @@ function App() {
   const addFilter = ({ name, propertyValue }) => {
     const cpColumnsFilters = filter.columnFilters;
     switch (name) {
+    case 'DELETE_FILTER': {
+      const cpColumnsFiltered = [...filter.columnsFiltered];
+      delete cpColumnsFiltered[0];
+      setFilter({
+        ...filter,
+        columnsFiltered: cpColumnsFiltered,
+
+      }); break; }
     case 'FILTER_NAME': { // console.log('filterName');
       setFilter({ ...filter, name: propertyValue }); break; }
     case 'FILTER_COLUMN': {
@@ -90,23 +95,33 @@ function App() {
     getPlanets(setPlanets);
   }, []);
 
-  // console.log('________meu_filter__________');
-  // console.log(filter.columnFilters);
+  let filtersElements = '';
+
+  if (filter.columnsFiltered.length > 0) {
+    filtersElements = filter.columnsFiltered.map((column) => (
+      <div key={ column } data-testid="filter">
+        {column}
+        <button
+          name={ column }
+          onClick={ () => {
+            addFilter({
+              name: 'DELETE_FILTER',
+              propertyValue: { column },
+            });
+          } }
+        >
+          x
+        </button>
+      </div>
+    ));
+  }
 
   return (
-    <starWarsPlanetsContext.Provider
-      value={ {
-        planets,
-        // filterName: filter.name,
-        filter,
-        // value: filter.value,
-        addFilter,
-      } }
-    >
+    <starWarsPlanetsContext.Provider value={ { planets, filter, addFilter } }>
       <div className="App">
         <p>
           <span>Name:</span>
-          {filter.name}
+          <span>{filter.name}</span>
         </p>
         <p>
           Comparison:
@@ -125,6 +140,7 @@ function App() {
           {filter.filterByColumn}
         </p>
 
+        {filtersElements}
         <Filter type="text" id="name" />
         <FilterByProperties
           properties={ [
@@ -135,9 +151,7 @@ function App() {
           valueDefault={ filter.columnFilters[0].column }
         />
         <FilterByProperties
-          properties={ [
-            'maior que', 'menor que', 'igual a',
-          ] }
+          properties={ ['maior que', 'menor que', 'igual a'] }
           id="comparison"
           valueDefault={ filter.columnFilters[0].comparison }
         />
@@ -151,11 +165,7 @@ function App() {
         >
           ADD Filter
         </button>
-
-        ;
-
         <Table />
-
       </div>
     </starWarsPlanetsContext.Provider>
   );
