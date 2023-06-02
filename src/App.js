@@ -37,8 +37,10 @@ function App() {
     const cpColumnsFilters = filter.columnFilters;
     switch (name) {
     case 'DELETE_FILTER': {
+      console.log('cheguei aki');
+      filter.columnsFiltered.splice(filter.columnsFiltered.indexOf(propertyValue), 1);
       const cpColumnsFiltered = [...filter.columnsFiltered];
-      delete cpColumnsFiltered[0];
+
       setFilter({
         ...filter,
         columnsFiltered: cpColumnsFiltered,
@@ -106,7 +108,7 @@ function App() {
           onClick={ () => {
             addFilter({
               name: 'DELETE_FILTER',
-              propertyValue: { column },
+              propertyValue: column,
             });
           } }
         >
