@@ -2,16 +2,31 @@ import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
-function FilterByProperties({ properties, id, valueDefault }) {
-  const { addFilter } = useContext(starWarsPlanetsContext);
-  const propertiesOptions = properties;
+function FilterByProperties({ properties, id }) {
+  const { addFilter, filter: {
+    columnsFiltered } } = useContext(starWarsPlanetsContext);
+  let propertiesOptions = properties;
+  const newArray = [...properties];
+  if (columnsFiltered.length > 0) {
+    // console.log(properties, columnsFiltered);
+    properties.forEach((property, index) => {
+      columnsFiltered.forEach((column) => {
+      //  console.log(property, column);
+        if (property === column) {
+          delete newArray[index];
+        }
+      });
+    });
+    propertiesOptions = newArray;
+    // console.log(newArray);
+  }
 
   return (
     <div>
       FilterByProperties
       <select
         name={ id }
-        value={ valueDefault }
+        // value={ valueDefault }
         onChange={ ({ target: { value } }) => addFilter({
           name: `FILTER_${id.toUpperCase()}`,
           propertyValue: value }) }

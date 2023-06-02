@@ -38,12 +38,12 @@ function Table() {
         case 'igual a': {
           return (property === Number(compareWith));
         }
-        default: { console.log('isDefault', property, compareWith, operatorComparation); }
+        default: // { console.log('isDefault', property, compareWith, operatorComparation); }
         }
       };
 
       const compareForEachFilter = () => {
-        console.log('ds');
+        // console.log('ds');
         let retorno = [];
 
         for (let index = 0; index < (columnFilters.length - 1); index += 1) {
@@ -54,7 +54,7 @@ function Table() {
               columnFilters[index].comparison,
             ),
           );
-          console.log(planetsFilteredObj.planetsFiltered);
+          // console.log(planetsFilteredObj.planetsFiltered);
           retorno = [...retorno, ...planetsFilteredObj.planetsFiltered];
         }
 

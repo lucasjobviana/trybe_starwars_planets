@@ -30,9 +30,7 @@ function App() {
 
   const [filter, setFilter] = useState({
     name: '',
-    column: 'population',
-    comparison: 'maior que',
-    value: 0,
+    columnsFiltered: [],
     columnFilters: [{ column: 'population', comparison: 'maior que', value: 0 }],
     filterByColumn: 'false',
   });
@@ -41,7 +39,7 @@ function App() {
   const addFilter = ({ name, propertyValue }) => {
     const cpColumnsFilters = filter.columnFilters;
     switch (name) {
-    case 'FILTER_NAME': { console.log('filterName');
+    case 'FILTER_NAME': { // console.log('filterName');
       setFilter({ ...filter, name: propertyValue }); break; }
     case 'FILTER_COLUMN': {
       cpColumnsFilters[actualIndex] = {
@@ -70,8 +68,13 @@ function App() {
       setFilter({
         ...filter,
         filterByColumn: propertyValue,
+        columnsFiltered: [
+          ...filter.columnsFiltered,
+          filter.columnFilters[actualIndex].column,
+        ],
         columnFilters: [
-          ...filter.columnFilters, {
+          ...filter.columnFilters,
+          {
             column: 'population',
             comparison: 'maior que',
             value: 0,
@@ -87,8 +90,8 @@ function App() {
     getPlanets(setPlanets);
   }, []);
 
-  console.log('________meu_filter__________');
-  console.log(filter.columnFilters);
+  // console.log('________meu_filter__________');
+  // console.log(filter.columnFilters);
 
   return (
     <starWarsPlanetsContext.Provider
@@ -97,7 +100,6 @@ function App() {
         // filterName: filter.name,
         filter,
         // value: filter.value,
-        columnFilters: filter.columnFilters,
         addFilter,
       } }
     >
