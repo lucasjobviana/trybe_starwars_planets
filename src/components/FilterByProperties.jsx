@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
-function FilterByProperties({ properties, id }) {
+function FilterByProperties({ properties, id, label = '', dataTestId }) {
   const { addFilter, filter: {
     columnsFiltered } } = useContext(starWarsPlanetsContext);
 
@@ -15,12 +15,9 @@ function FilterByProperties({ properties, id }) {
     }, []);
   }
 
-  console.log('macarrão');
-  console.log(properties[0], columnsFiltered.length > 0 && id === 'column');
-
   return (
     <div>
-      FilterByProperties
+      {label}
       <select
         name={ id }
         id={ id }
@@ -28,7 +25,7 @@ function FilterByProperties({ properties, id }) {
           name: `FILTER_${id.toUpperCase()}`,
           propertyValue: value,
         }) }
-        data-testid={ `${id}-filter` }
+        data-testid={ dataTestId }
       >
         {
           properties.map((property, index) => (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAPI } from './tools/api';// import { results } from './mocks/results';
+import { fetchAPI } from './tools/api';
 import './App.css';
 import Table from './components/Table';
 import starWarsPlanetsContext from './context/starWarsPlanetsContext';
@@ -12,21 +12,17 @@ const propertiesColumns = [
 ];
 const removeResidents = (results) => {
   const cpPlanetsWithoutResidents = [];
-
   results.forEach((planet, index) => {
     delete planet.residents;
     cpPlanetsWithoutResidents[index] = { ...planet };
   });
-
   return cpPlanetsWithoutResidents;
 };
-
 const getPlanets = async (setPlanets) => {
   const data = await fetchAPI();
   const planets = removeResidents(data.results);
   setPlanets(planets);
 };
-
 function App() {
   const [planets, setPlanets] = useState([{}]);
   const [filter, setFilter] = useState({
@@ -35,24 +31,27 @@ function App() {
     columnFilters: [{ column: 'population', comparison: 'maior que', value: 0 }],
     filterByColumn: 'false',
   });
+  const [order, setOrder] = useState({ column: 'population', sort: 'ASC', abled: false });
+  const cpColumnsFilters = filter.columnFilters;
   const actualIndex = filter.columnFilters.length - 1;
 
   const addFilter = ({ name, propertyValue }) => {
-    const cpColumnsFilters = filter.columnFilters;
-    switch (name) { // REMOVE_ALL_FILTERS
+    switch (name) {
+    case 'FILTER_COLUMN-SORT':
+      setOrder({ ...order, column: propertyValue });
+      break;
     case 'REMOVE_ALL_FILTERS': {
       setFilter({
         ...filter,
         columnsFiltered: [],
-        columnFilters: [{ column: 'population', comparison: 'maior que', value: 0 }],
         action: 'add',
+        columnFilters: [{ column: 'population', comparison: 'maior que', value: 0 }],
       }); break;
     }
     case 'DELETE_FILTER': {
       filter.columnsFiltered.splice(filter.columnsFiltered.indexOf(propertyValue), 1);
       const c = cpColumnsFilters.filter((f) => f.column !== propertyValue);
       const cpColumnsFiltered = [...filter.columnsFiltered];
-
       setFilter({
         ...filter, columnsFiltered: cpColumnsFiltered, columnFilters: c, action: 'rmv',
       }); break;
@@ -77,7 +76,8 @@ function App() {
       setFilter({ ...filter, columnFilters: cpColumnsFilters }); break;
     }
     case 'FILTER_BY_COLUMN': {
-      setFilter({ ...filter,
+      setFilter({
+        ...filter,
         filterByColumn: propertyValue,
         columnsFiltered: [
           ...filter.columnsFiltered, filter.columnFilters[actualIndex].column,
@@ -87,7 +87,6 @@ function App() {
     } default:
     }
   };
-
   useEffect(() => {
     getPlanets(setPlanets);
   }, []);
@@ -161,9 +160,12 @@ function App() {
 
     ));
   }
+  const handleChangeRadio = ({ target }) => {
+    setOrder({ ...order, sort: target.value });
+  };
 
   return (
-    <starWarsPlanetsContext.Provider value={ { planets, filter, addFilter } }>
+    <starWarsPlanetsContext.Provider value={ { planets, filter, addFilter, order } }>
       <div className="App">
         <div id="filtersList">
           {filtersElements}
@@ -179,17 +181,55 @@ function App() {
 
         <Filter type="text" id="name" />
         <FilterByProperties
-          properties={ [
-            'population', 'orbital_period', 'diameter',
-            'rotation_period', 'surface_water',
-          ] }
+          properties={ propertiesColumns }
           id="column"
+          label="Column: "
+          dataTestId="column-filter"
         />
         <FilterByProperties
           properties={ ['maior que', 'menor que', 'igual a'] }
           id="comparison"
+          label="Comparison: "
+          dataTestId="comparison-filter"
         />
         <Filter type="number" id="value" />
+
+        <div>
+          <FilterByProperties
+            properties={ [
+              'population', 'orbital_period', 'diameter',
+              'rotation_period', 'surface_water',
+            ] }
+            id="column-sort"
+            label="Order by: "
+            dataTestId="column-sort"
+          />
+          <input
+            type="radio"
+            name="r"
+            data-testid="column-sort-input-asc"
+            value="ASC"
+            onChange={ handleChangeRadio }
+          />
+          A ➡ Z
+          <input
+            type="radio"
+            name="r"
+            data-testid="column-sort-input-desc"
+            value="DESC"
+            onChange={ handleChangeRadio }
+          />
+          Z ➡ A
+          <button
+            data-testid="column-sort-button"
+            onClick={ () => {
+              setOrder({ ...order, abled: true });
+            } }
+          >
+            Order
+
+          </button>
+        </div>
 
         <button
           data-testid="button-filter"

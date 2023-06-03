@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import starWarsPlanetsContext from '../context/starWarsPlanetsContext';
 
 function Table() {
-  // console.log(props);
   const tableHeaders = [
     'Name', 'Rotation Period', 'Orbited Period', 'Diameter',
     'Climate', 'Gravity', 'Terrain', 'Surface Water',
@@ -16,7 +15,38 @@ function Table() {
   const state = useContext(starWarsPlanetsContext);
   const { filter: { filterByColumn, name, columnFilters },
   } = state;
-  const { planets } = state;
+
+  const { planets, order } = state;
+  const defineNumber = () => {
+    const magicPositive = 9999999999999;
+    const magicNegative = -9999999999999;
+    if (order.sort === 'ASC') {
+      return (magicPositive);
+    } return (magicNegative);
+  };
+
+  const comparePlanets = (a, b) => {
+    const arg1 = a[order.column] === 'unknown' ? defineNumber() : Number(a[order.column]);
+    const arg2 = b[order.column] === 'unknown' ? defineNumber() : Number(b[order.column]);
+    const magicOne = 1;
+    const magicNegativeOne = -1;
+    if (arg1 < arg2) {
+      console.log(arg1, '<', arg2);
+      return order.sort === 'ASC' ? magicNegativeOne : magicOne;
+    }
+    if (arg1 > arg2) {
+      console.log(arg1, '>', arg2);
+      return order.sort === 'ASC' ? magicOne : magicNegativeOne;
+    }
+    console.log(arg1, '=', arg2);
+    return 0;
+  };
+  if (order.abled === true) {
+    console.log('abllled ==== true');
+    console.log(planets);
+    planets.sort(comparePlanets);
+    console.log(planets);
+  }
 
   if (planets.length > 1) {
     const planetsFilteredObj = {
@@ -34,7 +64,8 @@ function Table() {
           return (property > Number(compareWith));
         }
         case 'menor que': {
-          return (property < Number(compareWith)); }
+          return (property < Number(compareWith));
+        }
         case 'igual a': {
           return (property === Number(compareWith));
         }
@@ -72,7 +103,7 @@ function Table() {
           {
             planetsFilteredObj.planetsFiltered.map((planet, index) => (
               <tr key={ `row${index}` }>
-                <td>{planet.name}</td>
+                <td data-testid="planet-name">{planet.name}</td>
                 <td>{planet.rotation_period}</td>
                 <td>{planet.orbital_period}</td>
                 <td>{planet.diameter}</td>
