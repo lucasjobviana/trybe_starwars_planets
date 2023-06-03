@@ -97,7 +97,6 @@ function Table() {
 
     return (
       <div className="table">
-        Table
         <table>
           <tr>{tableHeaderRow}</tr>
           {
