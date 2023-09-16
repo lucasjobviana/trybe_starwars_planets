@@ -11,7 +11,7 @@ Ao ser carregada, a página tras informações referentes à alguns planetas do 
 ## Quais tecnologias foram utilizadas ? 
 
 ### Front-End
-  - Javascript: [React - Componentes funcionais](https://www.typescriptlang.org/).
+  - Javascript: [React - Componentes funcionais](https://react.dev/).
 
 ## Tem algum pré-requisito para acessar o projeto ?
 
